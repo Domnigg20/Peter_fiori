@@ -1,3 +1,14 @@
+"! Loads flight data based on carrier and connection IDs.
+"! @parameter i_carrier_id    | Airline Code (e.g., 'LH')
+"! @parameter i_connection_id | Connection Number (e.g., '0400')
+"! @raising   cx_abap_invalid_value | Raised if flight is not found.
+"! "This defines how structured data objects work using OOP. 
+"I imported some CDS views
+
+
+
+
+
 CLASS zcl_structured_cl DEFINITION
   PUBLIC
   FINAL
