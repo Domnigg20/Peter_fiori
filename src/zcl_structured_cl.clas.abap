@@ -1,11 +1,5 @@
-"! Loads flight data based on carrier and connection IDs.
-"! @parameter i_carrier_id    | Airline Code (e.g., 'LH')
-"! @parameter i_connection_id | Connection Number (e.g., '0400')
-"! @raising   cx_abap_invalid_value | Raised if flight is not found.
-"! "This defines how structured data objects work using OOP. 
+"This defines how structured data objects work using OOP.
 "I imported some CDS views
-
-
 
 
 
@@ -24,7 +18,12 @@ CLASS zcl_structured_cl DEFINITION
     DATA ConnectionId   TYPE /dmo/airport_to_id.
 
 
-
+"! Loads flight data based on carrier and connection IDs.
+"! @parameter i_carrier_id    | Airline Code (e.g., 'LH')
+"! @parameter i_connection_id | Connection Number (e.g., '0400')
+"! @raising   cx_abap_invalid_value | Raised if flight is not found.
+"!
+"!
   METHODS load_flight
   IMPORTING
     i_carrier_id    TYPE /dmo/carrier_id
@@ -117,7 +116,7 @@ DATA(new_struct) =  NEW ZCL_STRUCTURED_CL( ).
     FIELDS DepartureAirport, DestinationAirport, \_Airline-Name
      WHERE AirlineID = 'LH'
        AND ConnectionID = '0400'
-      INTO @connection.
+      INTO  @connection.
 
     out->write(  `---------------------------------------` ).
     out->write(  `Example 1: Local Structured Type` ).
@@ -148,6 +147,9 @@ DATA(new_struct) =  NEW ZCL_STRUCTURED_CL( ).
       AND ConnectionId = '0400'
      INTO @connection_full.
 
+
+
+
 IF sy-subrc = 0.
 
 
@@ -155,6 +157,26 @@ IF sy-subrc = 0.
     out->write(  `--------------------------------------` ).
     out->write(  `Example 3: CDS View as Structured Type` ).
     out->write( connection_full ).
+
+
+
+    SELECT
+    FROM /dmo/connection as c
+    LEFT OUTER JOIN /dmo/airport as f
+    on c~airport_from_id = f~airport_id
+
+    FIELDS c~carrier_id, c~connection_id, c~airport_from_id, c~airport_to_id,
+
+    f~name AS airport_from_name
+
+    WHERE airport_id like 'S%'
+    INTO TABLE @DATA(connection_join).
+
+
+    out->write( '---Output of Connection Join---- ' ).
+
+    out->write( connection_join ).
+
 
 * Example 2: Global Structured Type
 **********************************************************************
@@ -165,6 +187,10 @@ ELSE.
     out->write(  `---------------------------------` ).
     out->write(  `Example 4: Global Structured Type` ).
     out->write( message ).
+
+
+
+
 
 
  ENDIF.
