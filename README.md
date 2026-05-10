@@ -13,7 +13,7 @@ and CDS View consumption.
 - Introduction to SELECT statements in ABAP
 
 ### zcl_cds_19
-- First use of CDS Views via /DMO/I_Connection
+- Use of CDS Views via /DMO/I_Connection
 - SELECT SINGLE with WHERE filters
 - Fetching associated data via \_Airline association
 
