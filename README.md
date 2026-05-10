@@ -18,7 +18,7 @@ and CDS View consumption.
 - Fetching associated data via \_Airline association
 
 ### zcl_structured_cl
-- Introduction to class definition and implementation
+- Class definition and implementation
 - Public methods and basic output
 
 ### zcl_structured_cl_2
