@@ -1,3 +1,13 @@
+"! Database Table: ZBOOK
+"!   ↓
+"! CDS View: ZI_BOOKTP (data projection)
+"!   ↓
+"! Behavior Definition: ZI_BOOKTP (business rules)
+"!   ↓
+"! Handler Class: ZBP_I_BOOKTP (custom logic)
+"!   ↓
+"! Test Class: Z_TEST_BOOK (this file - EML operations)
+"!
 
 ### CRUD Operations
 
