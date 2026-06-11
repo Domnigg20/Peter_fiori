@@ -1,0 +1,26 @@
+managed implementation in class zbp_env_cds unique; // Name it after your CDS
+define behavior for ZENV_CDS // Your CDS View
+persistent table ZRENV       // Your DB Table
+lock master
+authorization master ( none )// late numbering or early numbering can be used, we map the UUID here
+
+{
+  create;
+  update;
+  delete;
+
+
+  // This maps your short CDS field names back to the long DB Table fields
+  mapping for ZRENV
+  {
+    LogUuid = log_uuid;
+    FacilityId = facility_id;
+    CountryCode = country_code;
+    LogDate = log_date;
+    EnergySource = energy_source;
+    FuelConsumed = fuel_consumed;
+    FuelUnit = fuel_unit;
+    Co2Emitted = co2_emitted;
+    EmissionUnit = emission_unit;
+  }
+}
