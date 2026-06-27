@@ -1,13 +1,12 @@
-"! Database Table: ZBOOK
-"!   ↓
-"! CDS View: ZI_BOOKTP (data projection)
-"!   ↓
-"! Behavior Definition: ZI_BOOKTP (business rules)
-"!   ↓
-"! Handler Class: ZBP_I_BOOKTP (custom logic)
-"!   ↓
-"! Test Class: Z_TEST_BOOK (this file - EML operations)
-"!
+
+## 🏗️ Architecture Flow
+* **Database Table** (`ZBOOK`)  
+* └── **Interface CDS View** (`ZI_BOOKTP` - Core Data Model)  
+*     └── **Behavior Definition** (`ZI_BOOKTP` - Business Rules)  
+*         └── **Behavior Implementation Class** (`ZBP_I_BOOKTP` - Custom Logic)  
+*             └── **Test Class / Console Runner** (`Z_TEST_BOOK` - EML Operations)
+
+
 
 ### CRUD Operations
 
