@@ -7,6 +7,13 @@
 *             └── **Test Class / Console Runner** (`Z_TEST_BOOK` - EML Operations)
 
 
+## 🏗️ Architecture Flow
+* **Database Table** (`ZCL_ENV`)  
+* └── **Interface CDS View** (`ZENV_CDS` - Core Data Model)  
+*         └── **Behavior Implementation Class** (`ZENV_CDS.BDEF` - Custom Logic)  
+*             └── **Database Table** (`ZRENV`)
+                └── **Test Class / Console Runner** (`ZCL_ENV` - EML Operations)
+
 
 ### CRUD Operations
 
