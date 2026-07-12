@@ -1,17 +1,31 @@
-managed implementation in class zbp_env_cds unique; // Name it after your CDS
-define behavior for ZENV_CDS // Your CDS View
-persistent table ZRENV       // Your DB Table
-lock master
-authorization master ( none )// late numbering or early numbering can be used, we map the UUID here
+managed implementation in class zbp_env_cds unique;
+strict ( 2 );
 
+define behavior for ZENV_CDS // Your CDS View
+persistent table ZRENV
+draft table zrenv_d
+lock master
+authorization master ( global )
+ etag   master LogUuid
 {
   create;
   update;
   delete;
 
+field ( numbering : managed, readonly ) LogUuid;
+
+
+determination calculateEmissions  on modify {field FuelConsumed; }
+
+  draft action Activate;
+  draft action Discard;
+  draft action Edit;
+  draft action Resume;
+  draft action AdditionalSave;
 
   // This maps your short CDS field names back to the long DB Table fields
   mapping for ZRENV
+
   {
     LogUuid = log_uuid;
     FacilityId = facility_id;
