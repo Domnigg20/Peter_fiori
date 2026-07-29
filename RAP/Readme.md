@@ -1,5 +1,7 @@
 
-## 🏗️ Architecture Flow
+
+
+##  Architecture Flow
 * **Database Table** (`ZBOOK`)  
 * └── **Interface CDS View** (`ZI_BOOKTP` - Core Data Model)  
 *     └── **Behavior Definition** (`ZI_BOOKTP` - Business Rules)  
@@ -7,7 +9,7 @@
 *             └── **Test Class / Console Runner** (`Z_TEST_BOOK` - EML Operations)
 
 
-## 🏗️ Architecture Flow
+##  Architecture Flow
 * **Database Table** (`ZCL_ENV`)  
 * └── **Interface CDS View** (`ZENV_CDS` - Core Data Model)  
 *         └── **Behavior Implementation Class** (`ZENV_CDS.BDEF` - Custom Logic)  
@@ -31,3 +33,14 @@
 - **READ ENTITIES**: Retrieve data from business object
 - **IN LOCAL MODE**: Local processing without remote calls
 - **COMMIT ENTITIES**: Finalize and persist changes to database
+
+
+##  Project Architecture
+**ZI_CONNECTION_RR** - Root CDS View Entity for connection details.
+**ZI_FLIGHT_RR** - Child/Associated CDS View Entity for flight schedules and pricing.
+**ZI_CARRIER_RR** - Associated CDS View Entity for airline/carrier information.
+
+Service binding- ****ZUI_FLIGHT_ZCL** - Exposes the data model entities for consumption.
+Service Definition- **ZI_CONNECTION_ZCL** - Exposes the service definition as an OData UI service for previewing in SAP Fiori elements.
+
+
