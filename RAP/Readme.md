@@ -1,7 +1,7 @@
 
 
 
-##  Architecture Flow
+##  Architecture Flow For Environmental Emissions Data
 * **Database Table** (`ZBOOK`)  
 * └── **Interface CDS View** (`ZI_BOOKTP` - Core Data Model)  
 *     └── **Behavior Definition** (`ZI_BOOKTP` - Business Rules)  
@@ -35,12 +35,13 @@
 - **COMMIT ENTITIES**: Finalize and persist changes to database
 
 
-##  Project Architecture
-**ZI_CONNECTION_RR** - Root CDS View Entity for connection details.
-**ZI_FLIGHT_RR** - Child/Associated CDS View Entity for flight schedules and pricing.
-**ZI_CARRIER_RR** - Associated CDS View Entity for airline/carrier information.
+##  Architecture Flow For Flight Data
 
-Service binding- ****ZUI_FLIGHT_ZCL** - Exposes the data model entities for consumption.
-Service Definition- **ZI_CONNECTION_ZCL** - Exposes the service definition as an OData UI service for previewing in SAP Fiori elements.
+
+* **ZI_CONNECTION_RR** - Root CDS View Entity for connection details.
+* **ZI_FLIGHT_RR** - Child/Associated CDS View Entity for flight schedules and pricing.
+* **ZI_CARRIER_RR** - Associated CDS View Entity for airline/carrier information.
+* **Service Binding (`ZUI_FLIGHT_ZCL`)** - Exposes the data model entities for consumption.
+* **Service Definition (`ZI_CONNECTION_ZCL`)** - Exposes the service definition as an OData UI service for previewing in SAP Fiori elements
 
 
