@@ -2,6 +2,8 @@
 @EndUserText.label: 'Connection View CDS model'
 @Metadata.ignorePropagatedAnnotations: true
 
+
+@Search.searchable: true
 define view entity ZI_CARRIER_RR 
 as select from  /dmo/carrier
 
@@ -9,6 +11,8 @@ as select from  /dmo/carrier
    @ObjectModel.text.element: ['Name']  
     key carrier_id as CarrierId,
     @Semantics.text: true
+     @Search.defaultSearchElement: true
+     @Search.fuzzinessThreshold: 0.7
     name as Name,
     currency_code as CurrencyCode,
     local_created_by as LocalCreatedBy,
