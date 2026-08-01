@@ -8,8 +8,7 @@
 
    }
 
-
-
+@Search.searchable: true
 define view entity ZI_ConnectIon_Zcl 
   as select from /dmo/connection as Connection
   association [1..*] to ZI_FLIGHT_RR as _Flight
@@ -50,18 +49,30 @@ define view entity ZI_ConnectIon_Zcl
   // 1. Tells the UI where to find the descriptive name text
   @ObjectModel.text.association: '_Airline'
  @UI.textArrangement: #TEXT_FIRST
-  key carrier_id as CarrierId,
+ @Search.defaultSearchElement: true
+key carrier_id as CarrierId,
   
   @UI.lineItem: [{position: 20 }]
   @UI.identification: [{position: 20, label: 'Connection ID' }]
-  key connection_id as ConnectionId,
+   @Search.defaultSearchElement: true
+key connection_id as ConnectionId,
   
   @UI.selectionField: [{ position : 10 }]
   @UI.identification: [{position: 30, label: 'Departure Airport' }]
+   @Search.defaultSearchElement: true
+   @Consumption.valueHelpDefinition: [{  entity: {
+     name: 'ZI_AIRPORT_VHH',
+     element: 'AirportId' }
+     }]
   airport_from_id as AirportFromId,
   
   @UI.lineItem: [{position: 40 }]
   @UI.identification: [{position: 40, label: 'Destination Airport' }]
+     @Search.defaultSearchElement: true
+     @Consumption.valueHelpDefinition: [{  entity: {
+     name: 'ZI_AIRPORT_VHH',
+     element: 'AirportId' }
+     }]
   airport_to_id as AirportToId,
   
   @UI.lineItem: [{position: 50 }]
@@ -72,6 +83,7 @@ define view entity ZI_ConnectIon_Zcl
   @UI.identification: [{position: 60, label: 'Arrival Time' }]
   arrival_time as ArrivalTime,
   
+    
   @UI.lineItem: [{position: 70 }]
   @UI.identification: [{position: 70, label: 'Distance' }]
   @Semantics.quantity.unitOfMeasure: 'DistanceUnit'
@@ -82,6 +94,8 @@ define view entity ZI_ConnectIon_Zcl
   distance_unit as DistanceUnit,
   
   //        Association --->
+    @Search.defaultSearchElement: true
   _Flight,
+  @Search.defaultSearchElement: true
   _Airline
 }
