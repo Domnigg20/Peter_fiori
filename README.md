@@ -1,4 +1,4 @@
-# ABAP OOP & CDS Views - Learning Project
+# ABAP OOP & CDS Views - Portfolio
 
 Practice classes built on SAP BTP using the /DMO/ Flight Reference Scenario.
 This repo documents my progression from basic ABAP to Object Oriented Programming
