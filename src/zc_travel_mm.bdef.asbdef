@@ -1,0 +1,63 @@
+projection;
+
+strict ( 2 );
+
+
+
+define behavior for ZC_TRAVEL_MM
+
+use etag
+
+{
+
+use create;
+
+use update;
+
+use delete;
+
+use association _Booking { create; }
+
+}
+
+
+
+define behavior for ZC_BOOKING_TECCH
+
+use etag
+
+
+
+{
+
+use update;
+
+use delete;
+
+use association _Travel;
+
+use association _Bookingsuppl { create; }
+
+}
+
+
+
+define behavior for ZCBOOKSUPPL_TECH_M
+
+use etag
+
+
+
+{
+
+use update;
+
+use delete;
+
+use association _Booking;
+
+use association _Travel;
+
+
+
+}
