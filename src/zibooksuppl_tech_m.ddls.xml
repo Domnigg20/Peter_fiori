@@ -5,7 +5,7 @@
    <DDLS>
     <DDLNAME>ZIBOOKSUPPL_TECH_M</DDLNAME>
     <DDLANGUAGE>E</DDLANGUAGE>
-    <DDTEXT>Booking supply interface view</DDTEXT>
+    <DDTEXT>Interface view for booking supply</DDTEXT>
     <SOURCE_TYPE>W</SOURCE_TYPE>
    </DDLS>
   </asx:values>
