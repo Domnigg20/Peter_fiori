@@ -1,0 +1,6 @@
+@EndUserText.label: 'Travel definition for travels'
+define service ZSD_TRAVELS {
+  expose ZC_TRAVEL_MM;
+  expose ZC_BOOKING_TECCH;
+  expose ZCBOOKSUPPL_TECH_M;
+}
