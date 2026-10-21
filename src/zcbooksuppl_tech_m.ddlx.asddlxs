@@ -1,0 +1,43 @@
+@Metadata.layer: #CORE
+@Search.searchable: true
+@UI.headerInfo: {
+    typeName: 'Booking Supplement',
+    typeNamePlural: 'Booking Supplements',
+    title: {
+        type: #STANDARD,
+        label: 'Booking Supplement',
+        value: 'BookingSupplementId'
+    }
+}
+annotate entity ZCBOOKSUPPL_TECH_M with
+{
+  @UI.facet: [{
+      purpose: #STANDARD,
+      position: 10,
+      label: 'Booking Supplement',
+      type: #IDENTIFICATION_REFERENCE
+  }]
+
+  @Search.defaultSearchElement: true
+  TravelId;
+
+  @Search.defaultSearchElement: true
+  BookingId;
+
+  @UI.lineItem: [{ position: 10 }]
+  @UI.identification: [{ position: 10 }]
+  @Search.defaultSearchElement: true
+  BookingSupplementId;
+
+  @UI.lineItem: [{ position: 20 }]
+  @UI.identification: [{ position: 20 }]
+  @Consumption.valueHelpDefinition: [{ entity: { name: '/DMO/I_Supplement', element: 'SupplementID' } }]
+  SupplementId;
+
+  @UI.lineItem: [{ position: 30 }]
+  @UI.identification: [{ position: 30 }]
+  Price;
+
+  @Consumption.valueHelpDefinition: [{ entity: { name: 'I_Currency', element: 'Currency' } }]
+  CurrencyCode;
+}
