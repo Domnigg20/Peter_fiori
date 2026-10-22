@@ -19,7 +19,10 @@ implementation in class ZCL_bp_i_travel_mm unique
   delete;
   association _Booking { create;  }
   // Generate PDF
-action (features : instance) generatePDF result [1] ZDEC_PDF_FILE;
+    action (features : instance) generatePDF result [1] ZDEC_PDF_FILE;
+
+// NEW: Non-factory action to recalculate/return the total price
+  action ( features : instance ) calculateTotalPrice result [1] $self;
  mapping for ztravel_tech_m4
   {
   TravelId      = travel_id;
