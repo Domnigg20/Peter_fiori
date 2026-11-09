@@ -138,15 +138,23 @@ CLASS lhc_Travel IMPLEMENTATION.
 
 
   METHOD get_features.
+    READ ENTITIES OF zi_travel_mm IN LOCAL MODE
+    ENTITY Travel
+    FIELDS ( OverallStatus )
+    WITH CORRESPONDING #( keys )
+    RESULT DATA(lt_travels).
+
 
     result = VALUE #(
-      FOR key IN keys
+      FOR ls_travel IN lt_travels
       (
-        %tky = key-%tky
-        %action-generatePDF =
-          if_abap_behv=>fc-o-enabled
-        %action-calculateTotalPrice =
-          if_abap_behv=>fc-o-enabled
+      %tky                 = ls_travel-%tky
+      %action-acceptTravel = COND #(
+        WHEN ls_travel-OverallStatus = 'O'
+        THEN if_abap_behv=>fc-o-enabled
+        ELSE if_abap_behv=>fc-o-disabled )
+      %action-generatePDF  = if_abap_behv=>fc-o-enabled
+      %action-calculateTotalPrice = if_abap_behv=>fc-o-enabled
       )
     ).
 
@@ -236,7 +244,7 @@ CLASS lhc_Travel IMPLEMENTATION.
       TRY.
 
           " Generate a unique 16-byte UUID
-          APPEND VALUE #(
+  APPEND VALUE #(
             %cid     = <ls_entity>-%cid
             TravelId = cl_system_uuid=>create_uuid_x16_static( )
           ) TO mapped-travel.
@@ -411,8 +419,107 @@ CLASS lhc_Travel IMPLEMENTATION.
     ).
       ENDMETHOD.
 
-  METHOD copyTravel.
+ METHOD copyTravel.
+
+    DATA: lt_travel TYPE TABLE FOR CREATE ZI_TRAVEL_MM,
+
+          lt_booking TYPE TABLE FOR CREATE ZI_TRAVEL_MM\_Booking,
+
+          lt_bookingsuppl TYPE TABLE FOR CREATE ZBOOKING_TCH_M\_Bookingsuppl.
+
+    " 1. Read source travel instances using EML
+    READ ENTITIES OF ZI_TRAVEL_MM IN LOCAL MODE
+      ENTITY Travel
+      ALL FIELDS WITH CORRESPONDING #( keys )
+      RESULT DATA(lt_travel_r)
+      FAILED DATA(lt_failed).
+
+    READ ENTITIES OF ZI_TRAVEL_MM IN LOCAL MODE
+      ENTITY Travel BY \_Booking
+      ALL FIELDS WITH CORRESPONDING #( lt_travel_r )
+      RESULT DATA(lt_booking_r).
+
+    READ ENTITIES OF ZI_TRAVEL_MM IN LOCAL MODE
+      ENTITY Booking BY \_Bookingsuppl
+      ALL FIELDS WITH CORRESPONDING #( lt_booking_r )
+      RESULT DATA(lt_bookingsuppl_r).
+
+    " 2. Build the deep structure hierarchy natively
+    LOOP AT lt_travel_r INTO DATA(ls_travel_r).
+
+     " Get the corresponding %cid passed from the UI action
+          " Safely extract the %cid using OPTIONAL to prevent short dumps if not found
+      DATA(lv_cid) = VALUE #( keys[ KEY entity TravelId = ls_travel_r-TravelId ]-%cid OPTIONAL ).
+      IF lv_cid IS INITIAL.
+        CONTINUE.
+      ENDIF.
+
+      " Append root Travel entry
+      APPEND INITIAL LINE TO lt_travel ASSIGNING FIELD-SYMBOL(<ls_travel>).
+      <ls_travel>-%cid          = lv_cid.
+      <ls_travel>-%data         = CORRESPONDING #( ls_travel_r EXCEPT TravelId ).
+      <ls_travel>-BeginDate     = cl_abap_context_info=>get_system_date( ).
+      <ls_travel>-EndDate       = cl_abap_context_info=>get_system_date( ) + 30.
+      <ls_travel>-OverallStatus = 'O'.
+
+
+
+        APPEND VALUE #(  %cid_ref = <ls_travel>-%cid ) to
+        lt_booking  ASSIGNING FIELD-SYMBOL(<lt_bookingg>).
+
+      " Loop at related bookings and nest them directly into %target
+      LOOP AT lt_booking_r INTO DATA(ls_booking_r)
+                          USING KEY entity
+                          WHERE TravelId = ls_travel_r-TravelId.
+
+    APPEND INITIAL LINE TO <lt_bookingg>-%target ASSIGNING FIELD-SYMBOL(<ls_booking_target>).
+
+       <ls_booking_target>-%cid          = lv_cid && '_' && ls_booking_r-BookingId.
+        <ls_booking_target>-%data         = CORRESPONDING #( ls_booking_r EXCEPT TravelId BookingId ).
+        <ls_booking_target>-BookingStatus = 'N'.
+
+        APPEND VALUE #(
+  %cid_ref = <ls_booking_target>-%cid  ) TO lt_bookingsuppl ASSIGNING FIELD-SYMBOL(<ls_suppl_assoc>).
+
+        " Loop at related booking supplements and nest them into the booking's %target
+        LOOP AT lt_bookingsuppl_r INTO DATA(ls_booksupp_r)
+                    USING KEY ENTITY
+                    WHERE TravelId  = ls_travel_r-TravelId
+                    AND   BookingId = ls_booking_r-BookingId.
+
+          APPEND INITIAL LINE TO <ls_suppl_assoc>-%target ASSIGNING FIELD-SYMBOL(<ls_suppl_target>).
+          <ls_suppl_target>-%cid  = lv_cid && '_' && ls_booking_r-BookingId && '_' && ls_booksupp_r-BookingSupplementId.
+          <ls_suppl_target>-%data = CORRESPONDING #( ls_booksupp_r EXCEPT TravelId BookingId BookingSupplementId ).
+
+        ENDLOOP.
+      ENDLOOP.
+    ENDLOOP.
+
+    " 3. Execute a single deep MODIFY ENTITIES call
+    IF lt_travel IS NOT INITIAL.
+      MODIFY ENTITIES OF ZI_TRAVEL_MM IN LOCAL MODE
+        ENTITY Travel
+          CREATE FIELDS ( AgencyId CustomerId BeginDate EndDate BookingFee TotalPrice CurrencyCode OverallStatus Description )
+          WITH lt_travel
+        ENTITY Travel
+          CREATE BY \_Booking
+          FIELDS (  BookingDate CustomerID CarrierId ConnectionId FlightDate FlightPrice CurrencyCode BookingStatus )
+            WITH  lt_booking
+            ENTITY Booking
+          CREATE BY \_Bookingsuppl
+          FIELDS (  SupplementId Price CurrencyCode )
+          WITH lt_bookingsuppl
+        MAPPED   DATA(it_mapped)
+        FAILED   DATA(it_failed)
+        REPORTED DATA(it_reported).
+
+      " Pass mapping back to framework mapped structures
+      mapped-travel = it_mapped-travel.
+
+    ENDIF.
+
   ENDMETHOD.
+
 
   METHOD reCalcTotprice.
   ENDMETHOD.
