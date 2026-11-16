@@ -320,8 +320,7 @@ CLASS lhc_Travel IMPLEMENTATION.
         WHERE TravelId = <ls_group_entity>-TravelId.
 
         " When BookingID is zero or has no data
-        LOOP AT <ls_entities>-%target
-          ASSIGNING FIELD-SYMBOL(<ls_booking>).
+        LOOP AT <ls_entities>-%target ASSIGNING FIELD-SYMBOL(<ls_booking>).
 
           IF <ls_booking>-BookingId IS INITIAL.
 
