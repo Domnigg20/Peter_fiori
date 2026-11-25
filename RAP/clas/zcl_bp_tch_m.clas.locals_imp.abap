@@ -2,8 +2,6 @@
 CLASS lhc_ZBOOKING_TCH_M DEFINITION INHERITING FROM cl_abap_behavior_handler.
   PRIVATE SECTION.
 
-
-
  METHODS earlynumbering_bookingsuppl FOR NUMBERING
       IMPORTING entities FOR CREATE Booking\_Bookingsuppl.
 
@@ -11,9 +9,39 @@ CLASS lhc_ZBOOKING_TCH_M DEFINITION INHERITING FROM cl_abap_behavior_handler.
 *      IMPORTING keys FOR ACTION BookingSupplement~generatePDF
 *      RESULT result.
 
+METHODS get_instance_features
+  FOR INSTANCE FEATURES
+  IMPORTING keys REQUEST requested_features
+  FOR Booking
+  RESULT result.
+
 ENDCLASS.
 
 CLASS lhc_ZBOOKING_TCH_M IMPLEMENTATION.
+
+
+
+
+
+METHOD get_instance_features.
+
+  result = VALUE #(
+    FOR key IN keys
+    (
+      %tky = key-%tky
+
+      %action-acceptTravel =
+        if_abap_behv=>fc-o-enabled
+
+      %action-generatePDF =
+        if_abap_behv=>fc-o-enabled
+
+      %assoc-_Bookingsuppl =
+        if_abap_behv=>fc-o-enabled
+    )
+  ).
+
+ENDMETHOD.
 
 
   METHOD earlynumbering_bookingsuppl.
@@ -69,12 +97,16 @@ LOOP AT entities ASSIGNING FIELD-SYMBOL(<booking>)
 "When bookingID is zero or has no data.
 
 LOOP AT <booking>-%target ASSIGNING FIELD-SYMBOL(<booksuppl_num>).
-    APPEND CORRESPONDING #(  <booksuppl_num> ) to mapped-ZIBOOKSUPPL_TECH_M ASSIGNING FIELD-SYMBOL(<mapped_booksuppl>).
+
+
        IF  <booksuppl_num>-BookingsupplementID is INITIAL.
+
        lv_max_suppl_id += 1.
+
+
+    APPEND CORRESPONDING #(  <booksuppl_num> ) to mapped-ZIBOOKSUPPL_TECH_M ASSIGNING FIELD-SYMBOL(<mapped_booksuppl>).
+
         <mapped_booksuppl>-BookingsupplementID = lv_max_suppl_id.
-
-
 
             ENDIF.
 
