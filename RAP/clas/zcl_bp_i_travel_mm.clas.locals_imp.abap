@@ -153,10 +153,19 @@ CLASS lhc_Travel IMPLEMENTATION.
         WHEN ls_travel-OverallStatus = 'O'
         THEN if_abap_behv=>fc-o-enabled
         ELSE if_abap_behv=>fc-o-disabled )
-      %action-generatePDF  = if_abap_behv=>fc-o-enabled
-      %action-calculateTotalPrice = if_abap_behv=>fc-o-enabled
-      )
-    ).
+        %action-rejectTravel = COND #(
+        WHEN ls_travel-OverallStatus = 'O'
+        THEN if_abap_behv=>fc-o-enabled
+        ELSE if_abap_behv=>fc-o-disabled
+        )
+        %assoc-_Booking = COND #(
+  WHEN ls_travel-OverallStatus = 'O'
+  THEN if_abap_behv=>fc-o-enabled
+  ELSE if_abap_behv=>fc-o-disabled
+)
+
+    )
+  ).
 
   ENDMETHOD.
 
@@ -226,14 +235,22 @@ CLASS lhc_Travel IMPLEMENTATION.
     ).
 
   ENDMETHOD.
-
-
-  METHOD get_instance_authorizations.
-  ENDMETHOD.
+*
+ METHOD get_instance_authorizations.
+   result = VALUE #( FOR key IN keys
+    ( %tky                = key-%tky
+      %update             = if_abap_behv=>auth-allowed
+      %delete             = if_abap_behv=>auth-allowed
+      %action-acceptTravel = if_abap_behv=>auth-allowed ) ).
+ ENDMETHOD.
 
 
   METHOD get_global_authorizations.
-  ENDMETHOD.
+
+  IF requested_authorizations-%create = if_abap_behv=>mk-on.
+    result-%create = if_abap_behv=>auth-allowed.
+    ENDIF.
+      ENDMETHOD.
 
 
   METHOD earlynumbering_create.
@@ -524,6 +541,21 @@ CLASS lhc_Travel IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD rejectTravel.
+  MODIFY ENTITIES OF ZI_TRAVEL_MM IN LOCAL MODE
+  ENTITY travel
+  UPDATE FIELDS (  Overallstatus )
+  WITH VALUE #( FOR x_keys in keys ( %tky = x_keys-%tky
+                                      OverallStatus = 'X' ) ).
+
+  READ ENTITIES OF ZI_TRAVEL_MM IN LOCAL MODE
+  ENTITY travel
+  ALL FIELDS WITH CORRESPONDING #( keys )
+  RESULT DATA(x_result).
+
+  result = VALUE #( FOR y_result in  x_result (  %tky = y_result-%tky
+                                                  %param = y_result  )  ).
+
+
   ENDMETHOD.
 
 ENDCLASS.
